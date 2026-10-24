@@ -1,3 +1,4 @@
+
 public abstract class Account {
 
     private final String accountNumber;
@@ -27,18 +28,17 @@ public abstract class Account {
 
     public abstract boolean canWithdraw(long amount);
 
-    public void deposit(long amount) {
+    public synchronized void deposit(long amount) {
         if (amount > 0) {
             balance += amount;
         }
     }
 
-    public boolean withdraw(long amount) {
+    public synchronized boolean withdraw(long amount) {
         if (canWithdraw(amount)) {
             balance -= amount;
             return true;
         }
-
         return false;
     }
 
@@ -50,7 +50,7 @@ public abstract class Account {
         return ownerName;
     }
 
-    public long getBalance() {
+    public synchronized long getBalance() {
         return balance;
     }
 
@@ -58,24 +58,21 @@ public abstract class Account {
         return active;
     }
 
+    public void setActive(boolean active) {
+        this.active = active;
+    }
+
     @Override
     public String toString() {
-        return accountNumber + " | " +
-               ownerName + " | " +
-               balance;
+        return accountNumber + " | " + ownerName + " | " + getBalance();
     }
 
     @Override
     public boolean equals(Object o) {
-
-        if (this == o)
-            return true;
-
-        if (!(o instanceof Account))
-            return false;
+        if (this == o) return true;
+        if (!(o instanceof Account)) return false;
 
         Account other = (Account) o;
-
         return accountNumber.equals(other.accountNumber);
     }
 

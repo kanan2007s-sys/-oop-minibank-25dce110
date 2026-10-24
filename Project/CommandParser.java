@@ -1,23 +1,31 @@
+
 public class CommandParser {
 
     public static Command parse(String line) {
+        if (line == null || line.trim().isEmpty()) {
+            return null;
+        }
 
-        String[] parts = line.split(" ");
+        String[] parts = line.trim().split("\\s+");
 
         if (parts.length != 3) {
             return null;
         }
 
-        TransactionType type = TransactionType.valueOf(parts[0]);
+        try {
+            TransactionType type =
+                TransactionType.valueOf(parts[0].toUpperCase());
 
-        String accountNumber = parts[1];
+            String accountNumber = parts[1];
+            long amount = Long.parseLong(parts[2]);
 
-        long amount = Long.parseLong(parts[2]);
+            if (amount <= 0) {
+                return null;
+            }
 
-        return new Command(
-                type,
-                accountNumber,
-                amount
-        );
+            return new Command(type, accountNumber, amount);
+        } catch (IllegalArgumentException e) {
+            return null;
+        }
     }
 }
